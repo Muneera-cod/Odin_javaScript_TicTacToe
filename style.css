@@ -144,7 +144,9 @@ h1{
 .choose p{
     font-weight: 700;
 }
-
+#score-status{
+    color: white;
+}
 .title{
     font-weight: 700;
     letter-spacing: 0.1em;

@@ -11,13 +11,36 @@ console.log(gameCellsContainer)
 const xo=[x,o]
 
 
+const GameBrd=(()=>{
+  let gameBroad=["","","","","","","","",""]
+  const render=()=>{
+      let boardHTML="";
+      gameBroad.forEach((cell,index)=>boardHTML+=`<div class="cell" id=cell-${index}>${cell}</div>`);
+      gameCellsContainer.innerHTML=boardHTML;    
+      const cells=document.querySelectorAll('.cell')
+  cells.forEach((cell)=>{
+    cell.addEventListener('click',Game.clicked)
+  })
+}
+const update=(index,mark)=>{
+gameBroad[index]=mark
+render()
+}
+const getGameBoard=()=>gameBroad
+return { render , update ,getGameBoard }
+})();
+
 const displayMessage=(()=>{
     const renderMessage=(message)=>{
       document.getElementById("status").innerHTML=message
     }
-    const handleScore=(score,playerIndex)=>{
-          score+=1
-          document.getElementById(`score-player-${playerIndex}`).innerHTML=score
+    const handleScore=(players,playerIndex)=>{
+          players[playerIndex].score = players[playerIndex].score + 1
+          console.log(`score in handleScoreFunction ${players[playerIndex].score}`)
+          document.getElementById(`score-player-${playerIndex}`).innerHTML=players[playerIndex].score
+           document.getElementById("score-status").innerHTML=`${players[playerIndex].name}  scored`
+            console.log('winsScore',GameBrd.getGameBoard())
+            // console.log('winsScore',GameBrd.getGameBoard().filter((x)=>x==="").length===0)
     }
     return{
       renderMessage,handleScore
@@ -25,24 +48,7 @@ const displayMessage=(()=>{
 })();
 
 
-const GameBrd=(()=>{
-      let gameBroad=["","","","","","","","",""]
-      const render=()=>{
-          let boardHTML="";
-          gameBroad.forEach((cell,index)=>boardHTML+=`<div class="cell" id=cell-${index}>${cell}</div>`);
-          gameCellsContainer.innerHTML=boardHTML;    
-          const cells=document.querySelectorAll('.cell')
-      cells.forEach((cell)=>{
-        cell.addEventListener('click',Game.clicked)
-      })
-}
-const update=(index,mark)=>{
-    gameBroad[index]=mark
-    render()
-}
-const getGameBoard=()=>gameBroad
-return { render , update ,getGameBoard }
-})();
+
 // 012
 // 345
 // 678
@@ -59,7 +65,7 @@ const createPlayer=(name,mark,score)=>{
         name,mark,score
        }
 }
- const checkWin=(board,mark)=>{
+ const checkWin=(board,index)=>{
    const winConditions=[
     [0,1,2],
     [3,4,5],
@@ -72,7 +78,7 @@ const createPlayer=(name,mark,score)=>{
    ]
    for(let i=0;i<winConditions.length;i++){
     const [a,b,c]=winConditions[i]
-    if(board[a] && (board[a] === board[b]) && (board[a] === board[c])){
+    if(winConditions[i].includes(index) && board[a] && (board[a] === board[b]) && (board[a] === board[c])){
       console.log(a,board[a],b,board[b],c,board[c])
         return true
     }
@@ -91,39 +97,45 @@ const Game=(()=>{
   let currentPlayerIndex;
   let gameOver;
    const start=()=>{
-     currentPlayerIndex=0
+      currentPlayerIndex=0
       gameOver=false;
       let random=getRandomElement(xo)
       let removePlayerEntered=xo.filter((x)=>x!==random)
       players=[ createPlayer(document.getElementById('player-1').value,random,0),
       createPlayer(document.getElementById('player-2').value,removePlayerEntered[0],0)]
       GameBrd.render() 
-      const cells=document.querySelectorAll('.cell')
-      cells.forEach((cell)=>{
-        cell.addEventListener('click',clicked)
-      })
-      
+      // const cells=document.querySelectorAll('.cell')
+      // cells.forEach((cell)=>{
+      //   cell.addEventListener('click',clicked)
+      // })   
    }
    const clicked=(event)=>{
-    if(GameBrd.getGameBoard().every((val)=>val!=="")) { gameOver=true; displayMessage.renderMessage(`${players.find((x)=>x.score===players.reduce((x,y)=>x.score>y.score?x.score:y.score,0)).name} Wons`) }
-    if (gameOver) return;
+    if(GameBrd.getGameBoard().every((val)=>val!=="")){ gameOver=true;  }
+    
+    if(gameOver){return}
     const index=parseInt(event.target.id.split("-")[1])
-    console.log(currentPlayerIndex)
+    console.log(`current Player index ${currentPlayerIndex}`)
     if(GameBrd.getGameBoard()[index]!=="") return
     
-
+    GameBrd.getGameBoard().filter((x)=>x==="").length>1?displayMessage.renderMessage(`${players[currentPlayerIndex===0?1:0].name}'s Turn`):displayMessage.renderMessage(`Game Over`)
     GameBrd.update(index,players[currentPlayerIndex].mark)
-    if(checkWin(GameBrd.getGameBoard(),players[currentPlayerIndex].mark)){
+   
+    if(checkWin(GameBrd.getGameBoard(),index)){
      
-      displayMessage.renderMessage(`${players[currentPlayerIndex].name} scored`)
-      displayMessage.handleScore(players[currentPlayerIndex].score,currentPlayerIndex)
+      console.log(`${players[currentPlayerIndex].name} scored,currentIndex${currentPlayerIndex}`)
+      displayMessage.handleScore(players,currentPlayerIndex)
     }
     else if(isATie(GameBrd.getGameBoard(),players)){
       gameOver=true
       displayMessage.renderMessage("It's a tie")
-    }else{
-      currentPlayerIndex=currentPlayerIndex===0?1:0
     }
+    // // else{
+    //   currentPlayerIndex=currentPlayerIndex===0?1:0
+    // }
+    if(GameBrd.getGameBoard().filter((x)=>x==="").length===0 && players.every((x)=>x.score!==players[0].score)){
+      document.getElementById("score-status").innerHTML=`${players.find((x)=>x.score===players.reduce((x,y)=>x.score>y.score?x.score:y.score,0)).name} Wons`
+    }
+    currentPlayerIndex=currentPlayerIndex===0?1:0
   
     console.log(event)
    }
