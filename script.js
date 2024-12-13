@@ -7,6 +7,7 @@ const o=`<div class="round">
                 </div>`              
 let gameCellsContainer=document.querySelector('.game-board')
 const startButton=document.getElementById("start-button")
+const restartButton=document.getElementById("restart")
 console.log(gameCellsContainer)
 const xo=[x,o]
 
@@ -26,10 +27,14 @@ const update=(index,mark)=>{
 gameBroad[index]=mark
 render()
 }
-const getGameBoard=()=>gameBroad
-return { render , update ,getGameBoard }
-})();
+const restart=()=>{
+    gameBroad=gameBroad.map((x)=>x="")
+     render()
 
+}
+const getGameBoard=()=>gameBroad
+return { render , update ,restart,getGameBoard }
+})();
 const displayMessage=(()=>{
     const renderMessage=(message)=>{
       document.getElementById("status").innerHTML=message
@@ -42,6 +47,7 @@ const displayMessage=(()=>{
             console.log('winsScore',GameBrd.getGameBoard())
             // console.log('winsScore',GameBrd.getGameBoard().filter((x)=>x==="").length===0)
     }
+    
     return{
       renderMessage,handleScore
     }
@@ -132,15 +138,26 @@ const Game=(()=>{
     // // else{
     //   currentPlayerIndex=currentPlayerIndex===0?1:0
     // }
-    if(GameBrd.getGameBoard().filter((x)=>x==="").length===0 && players.every((x)=>x.score!==players[0].score)){
-      document.getElementById("score-status").innerHTML=`${players.find((x)=>x.score===players.reduce((x,y)=>x.score>y.score?x.score:y.score,0)).name} Wons`
+    if(GameBrd.getGameBoard().filter((x)=>x==="").length===0 ){
+      document.getElementById("score-status").innerHTML=`${players.find((x)=>x.score===players.reduce((x,y)=>x>y.score?x:y.score,0)).name} Wons`
+      if( players.every((x)=>x.score===players[0].score)){
+        document.getElementById("score-status").innerHTML=`Equal Equal`
+
+      }
     }
+    
     currentPlayerIndex=currentPlayerIndex===0?1:0
   
     console.log(event)
    }
+   const restart=()=>{
+       GameBrd.restart()
+       displayMessage.renderMessage('')
+       document.getElementById("score-status").innerHTML=""
+       start()
+   }
    return{
-    start,clicked
+    start,clicked,restart
    }
 })()
 startButton.addEventListener('click',function(event){
@@ -160,7 +177,9 @@ document.getElementById('secondPlayer').textContent=Secondplayer
 
 
 })
-
+restartButton.addEventListener('click',function(event){
+    Game.restart()
+})
 
 console.log(gameCellsContainer)
 

@@ -40,7 +40,7 @@ h1{
 #inputContainer{
      left: 50%;
      top: 50%;
-     width: 35rem;
+     width: 100%;
      min-height: 100vh;
      transform: translate(-50% ,-50%);
     display: flex;
@@ -132,6 +132,20 @@ h1{
     gap:1rem;
     /* flex-basis: 50%; */
   
+}
+#restart{
+    position: absolute;
+    top: 50%;
+    left: 25%;
+    transform: translate(-50%,-25%);
+    background: black;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    &:hover{
+        color: black;
+        background: white;
+    }
 }
 .choose{
     color: white;
