@@ -140,8 +140,8 @@ h1{
     transform: translate(-50%,-25%);
     background: black;
     color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
+    padding: 7px 15px;
+    border-radius: 10px;
     &:hover{
         color: black;
         background: white;
@@ -170,6 +170,14 @@ h1{
 .subtitle{
     color: white;
 }
+@media (max-width:1060px) {
+    #restart{
+       
+        top: 13%;
+        left: 65%;
+     
+    }
+}
 @media (max-width:800px) {
     .game-board{
     width: 22rem;
@@ -179,6 +187,12 @@ h1{
        
        
         width: 22rem;
+    }
+    #restart{
+       
+        top: 15%;
+        left: 80%;
+     
     }
 }
 @media (max-width:500px) {
@@ -194,4 +208,11 @@ h1{
     .title{
       font-size: medium;
     }
+    #restart{
+       
+        top: 19%;
+        left: 80%;
+     
+    }
+  
 }
