@@ -47,9 +47,14 @@ const displayMessage=(()=>{
             console.log('winsScore',GameBrd.getGameBoard())
             // console.log('winsScore',GameBrd.getGameBoard().filter((x)=>x==="").length===0)
     }
+    const resetScore=()=>{
+       document.getElementById(`score-player-${0}`).innerHTML=0
+       document.getElementById(`score-player-${1}`).innerHTML=0
+
+    }
     
     return{
-      renderMessage,handleScore
+      renderMessage,handleScore,resetScore
     }
 })();
 
@@ -151,10 +156,13 @@ const Game=(()=>{
     console.log(event)
    }
    const restart=()=>{
-       GameBrd.restart()
+       gameOver=false
        displayMessage.renderMessage('')
        document.getElementById("score-status").innerHTML=""
-       start()
+       players.map((x)=>x.score=0)
+       displayMessage.resetScore()
+       GameBrd.restart()
+       console.log(players)
    }
    return{
     start,clicked,restart
